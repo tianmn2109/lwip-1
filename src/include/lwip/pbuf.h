@@ -62,10 +62,10 @@ typedef enum {
 } pbuf_layer;
 
 typedef enum {
-  PBUF_RAM, /* pbuf data is stored in RAM */
-  PBUF_ROM, /* pbuf data is stored in ROM */
-  PBUF_REF, /* pbuf comes from the pbuf pool */
-  PBUF_POOL /* pbuf payload refers to RAM */
+  PBUF_RAM, /* pbuf data is stored in RAM */ // the data is stored in the RAM behind the pbuf struct.:mem_alloc  
+  PBUF_ROM, /* pbuf data is stored in ROM */ // only alloc the pbuf struct in the pool, the data is in the ROM :memp_alloc MEMP_PUF
+  PBUF_REF, /* pbuf comes from the pbuf pool */ //only alloc the pbuf_struct in the pool, the data is in the RAM, :memp_alloc MEMP_PBUF
+  PBUF_POOL /* pbuf payload refers to RAM */  // the pubf and the data is in the pool, the data is behind the pbuf struct, :memp_alloc MEMP_PBUF_POOL
 } pbuf_type;
 
 
