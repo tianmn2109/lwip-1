@@ -129,7 +129,7 @@ struct etharp_entry {
 static struct etharp_entry arp_table[ARP_TABLE_SIZE];  /* 缓存表项的大小 默认值为10个表项  */
 
 #if !LWIP_NETIF_HWADDRHINT
-static u8_t etharp_cached_entry;                     /*  用来记录本次查找表项的起始位置  */
+static u8_t etharp_cached_entry;                     /* ????  */
 #endif /* !LWIP_NETIF_HWADDRHINT */
 
 /** Try hard to create a new entry - we want the IP address to appear in
@@ -617,6 +617,9 @@ etharp_remove_static_entry(ip_addr_t *ipaddr)
  *
  * @param netif points to a network interface
  */
+/**
+ *  删除指定网卡接口的所有ARP缓存表项
+ */
 void etharp_cleanup_netif(struct netif *netif)
 {
   u8_t i;
@@ -730,6 +733,11 @@ etharp_ip_input(struct netif *netif, struct pbuf *p)
  * @return NULL
  *
  * @see pbuf_free()
+ */
+/**
+ *  ARP 输入处理函数　　1: 首先判断ARP包是否完整
+ *                      2: 判断此包是否发给自己
+ *                      3: 判断是请求包还是应答包，　如果是请求包进行应答，　如果是应答包不处理，因为之前已经更新过ARP缓存表项
  */
 static void
 etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr, struct pbuf *p)
@@ -1068,8 +1076,8 @@ etharp_output(struct netif *netif, struct pbuf *q, ip_addr_t *ipaddr)
  *
  */
 /**
- *  1: 发送ARP请求
- *  2: 查找或者创建缓存表项
+ *  1: 查找或者创建缓存表项
+ *  2: 如果返回的是empty状态的表项，将其设置为pending状态并发送ARP请求，如果是pending状态直接发送ARP请求
  *  3: 如果缓存表存在ip且为stable 状态，直接发送
  *  4: 如果为pending状态，添加到发送队列尾部
  */
